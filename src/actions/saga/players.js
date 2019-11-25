@@ -1,0 +1,1 @@
+export const GET_PLAYERS_ASYNC = 'GET_PLAYERS_ASYNC'
