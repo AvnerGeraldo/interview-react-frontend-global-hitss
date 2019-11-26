@@ -5,7 +5,7 @@ import { Provider } from 'react-redux'
 import store from '../store'
 
 //Components
-import App from '../'
+import App from '../components'
 
 export default _=> (
 	<Provider store={store}>
