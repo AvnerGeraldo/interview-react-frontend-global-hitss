@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Row, Col, Form } from 'react-bootstrap'
+import { Row, Col, Form, ProgressBar  } from 'react-bootstrap'
 import styled from 'styled-components'
 
 //Images
@@ -16,12 +16,20 @@ const ContentCenterRow = styled.div`
 		justify-content: center!important;
 	}
 
+	.row:last-child {
+		margin-top: 10px;
+	}
+
 	.player-name {
 		text-transform: capitalize;
 	}
 
 	.dice {
 		cursor: pointer;
+	}
+
+	input.form-control {
+		text-align: center;
 	}
 `
 
@@ -43,13 +51,23 @@ class Player extends PureComponent
 	}
 
 	render() {
-		const { nome, forca, agilidade, arma, isYourRound } = this.props
+		const { nome, forca, agilidade, arma, vida, valueLife, isYourRound } = this.props
 		const { valueDices } = this.state
 
 		if (!nome)
 			return (
 				<Row>Loading...</Row>
 			)
+		
+		//Calculate Life progressBar
+		let variantProgressBar = 'success'
+		const porcentagem = Math.round((valueLife * 100) / vida, 2)
+
+		if (porcentagem >= 30 && porcentagem <= 60)
+				variantProgressBar = 'info'
+		
+		if (porcentagem < 30)
+				variantProgressBar = 'danger'
 
 		return (
 			<ContentCenterRow>
@@ -69,10 +87,18 @@ class Player extends PureComponent
 					<Col xs='8' md='4' lg='2'>
 						<Form.Control 
 							type='text'
-							refs='txtDice'
+							ref='txtDice'
 							value={valueDices > 0 ? valueDices : ''}
 							readOnly
 						/>
+					</Col>
+				</Row>
+				<Row>
+					<Col xs='12' md='10' lg='10'>
+						<ProgressBar 
+							now={porcentagem} 
+							label={`${valueLife}`}
+							variant={variantProgressBar} />
 					</Col>
 				</Row>
 			</ContentCenterRow>
