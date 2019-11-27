@@ -1,12 +1,15 @@
-import { SET_DICE_PLAYER, SET_ROUND_AND_PLAYER, SET_TURN_PLAYER } from '../actions/round'
+import { SET_DICE_PLAYER, SET_DRAW_PLAYER, SET_ROUND_AND_PLAYER, SET_TURN_PLAYER, FAIL_SET_ROUND_AND_PLAYER } from '../actions/round'
 
 const initialState = {
 	round: 0,
+	gameId: 0,
 	initialPlayer: 0,
 	diceHumanPlayer: 0,
 	diceOrcPlayer: 0,
-	humanPlayed: false,
-	orcPlayed: false
+	isHumanPlayed: false,
+	isOrcPlayed: false,
+	isRoundDamage: '',
+	error: ''
 }
 
 export default (state = initialState, { type, payload }) => {
@@ -27,25 +30,42 @@ export default (state = initialState, { type, payload }) => {
 				...state,
 				...dicePlayer
 			}
+		case SET_DRAW_PLAYER:
+			return {
+				...state,
+				diceHumanPlayer: 0,
+				diceOrcPlayer: 0,
+				isHumanPlayed: false,
+				isOrcPlayed: false,
+				error: ''
+			}
 		case SET_ROUND_AND_PLAYER:
-			const { initialPlayer } = payload
+			const { initialPlayer, gameId } = payload
 			const round = state.round + 1
 
 			return {
 				...state,
 				round,
+				gameId,
 				initialPlayer
 			}
+		case FAIL_SET_ROUND_AND_PLAYER:
+			const { error } = payload
+			return {
+				...state,
+				isHumanPlayed: false,
+				isOrcPlayed: false,
+				error
+			}
 		case SET_TURN_PLAYER:
-			const { player } = payload
 			let played = {
-				humanPlayed: true
+				isHumanPlayed: true
 			}
 
 
-			if (player === 'orc')
+			if (payload.player === 'orc')
 				played = {
-					orcPlayed: true
+					isOrcPlayed: true
 				}
 
 			return {

@@ -10,14 +10,36 @@ import { GET_PLAYERS_ASYNC } from '../actions/saga/players'
 
 //Components
 import Player from './Player/Player'
+import Round from './Round/Round'
 
-class App extends Component {
+class App extends Component
+{
+	state = {
+		isGameOver: false
+	}
 
 	componentDidMount() {
 		this.props.getPlayers()
 	}
 
+	componentDidUpdate(prevProps) {
+		const dataPlayers = this.props.playersReducer.data
+
+		if (dataPlayers.length > 0) {
+			if (dataPlayers[0].vida <= 0 || dataPlayers[1].vida <= 0) {
+				this.setState({
+					isGameOver: true
+				})
+
+				dispatch({
+					type: RESET_ROUND_ASYNC
+				})
+			}
+		}
+	}
+
 	render() {
+		const { isGameOver } = this.state
 		const dataPlayers = this.props.playersReducer.data
 		const error = this.props.playersReducer.error
 		let orcPlayer, humanPlayer
@@ -36,15 +58,21 @@ class App extends Component {
 				} else {
 					humanPlayer = dataPlayers[p]
 				}
-			}			
+			}
+		}
+
+		if (isGameOver) {
+			return (
+				'Jogo acabou pop-up'
+			)
 		}
 
 		return (
 			<Container>
 				<Row>
-					<Col xs='5' md='5' lg='5'><Player {...humanPlayer} isYourRound={true}/></Col>
-					<Col xs='2' md='2' lg='2'>Mensagens</Col>
-					<Col xs='5' md='5' lg='5'><Player {...orcPlayer} /></Col>
+					<Col xs='5' md='5' lg='5'><Player {...humanPlayer} valueLife={3} isYourRound={true}/></Col>
+					<Col xs='2' md='2' lg='2'><Round /></Col>
+					<Col xs='5' md='5' lg='5'><Player {...orcPlayer} valueLife={10} /></Col>
 				</Row>
 			</Container>
 		)
