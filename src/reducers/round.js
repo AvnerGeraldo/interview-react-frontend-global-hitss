@@ -1,76 +1,47 @@
-import { SET_DICE_PLAYER, SET_DRAW_PLAYER, SET_ROUND_AND_PLAYER, SET_TURN_PLAYER, FAIL_SET_ROUND_AND_PLAYER } from '../actions/round'
+import { GET_ROUND_DATA, SET_WHOS_ROUND, CLEAN_WHOS_ROUND, FAIL_REQUEST } from '../actions/round'
 
 const initialState = {
 	round: 0,
 	gameId: 0,
 	initialPlayer: 0,
-	diceHumanPlayer: 0,
-	diceOrcPlayer: 0,
-	isHumanPlayed: false,
-	isOrcPlayed: false,
-	isRoundDamage: '',
-	error: ''
+	orcId: 0,
+	orcLife: 0,
+	humanId: 0,
+	humanLife: 0,
+	error: '',
+	whosRound: ''
 }
 
 export default (state = initialState, { type, payload }) => {
 	switch(type) {
-		case SET_DICE_PLAYER:
-			const { player, valueDice } = payload
-			let dicePlayer = {
-				diceHumanPlayer: valueDice
-			}
-
-
-			if (player === 'orc')
-				dicePlayer = {
-					diceOrcPlayer: valueDice
-				}
-
+		case GET_ROUND_DATA:
+			const { data } = payload
 			return {
 				...state,
-				...dicePlayer
+				round: data.turno,
+				gameId: data.id,
+				initialPlayer: data.jogador_iniciante,
+				orcId: data.id_personagem_orc,
+				orcLife: data.vida_orc,
+				humanId: data.id_personagem_humano,
+				humanLife: data.vida_humano
 			}
-		case SET_DRAW_PLAYER:
+		case SET_WHOS_ROUND:
+			const { player } = payload
 			return {
 				...state,
-				diceHumanPlayer: 0,
-				diceOrcPlayer: 0,
-				isHumanPlayed: false,
-				isOrcPlayed: false,
-				error: ''
+				whosRound: player
 			}
-		case SET_ROUND_AND_PLAYER:
-			const { initialPlayer, gameId } = payload
-			const round = state.round + 1
-
+		case CLEAN_WHOS_ROUND:
 			return {
 				...state,
-				round,
-				gameId,
-				initialPlayer
+				whosRound: ''
 			}
-		case FAIL_SET_ROUND_AND_PLAYER:
+		case FAIL_REQUEST:
 			const { error } = payload
 			return {
 				...state,
-				isHumanPlayed: false,
-				isOrcPlayed: false,
 				error
-			}
-		case SET_TURN_PLAYER:
-			let played = {
-				isHumanPlayed: true
-			}
-
-
-			if (payload.player === 'orc')
-				played = {
-					isOrcPlayed: true
-				}
-
-			return {
-				...state,
-				...played
 			}
 		default:
 			return state
