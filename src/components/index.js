@@ -22,7 +22,7 @@ class App extends Component
 		this.props.getPlayers()
 	}
 
-	componentDidUpdate(prevProps) {
+	componentDidUpdate() {
 		const dataPlayers = this.props.playersReducer.data
 
 		if (dataPlayers.length > 0) {
@@ -30,19 +30,18 @@ class App extends Component
 				this.setState({
 					isGameOver: true
 				})
-
-				dispatch({
-					type: RESET_ROUND_ASYNC
-				})
 			}
 		}
 	}
 
 	render() {
+		const { playersReducer, roundReducer } = this.props
 		const { isGameOver } = this.state
-		const dataPlayers = this.props.playersReducer.data
-		const error = this.props.playersReducer.error
+		const dataPlayers = playersReducer.data
+		const errorPlayers = playersReducer.error
+		const { orcLife, humanLife, whosRound } = roundReducer
 		let orcPlayer, humanPlayer
+		let error = errorPlayers
 
 		if (error)
 			return (
@@ -52,13 +51,8 @@ class App extends Component
 			)
 
 		if (dataPlayers.length > 0) {
-			for(let p = 0; p < dataPlayers.length; p++) {
-				if (dataPlayers[p].nome === 'orc') {
-					orcPlayer = dataPlayers[p]
-				} else {
-					humanPlayer = dataPlayers[p]
-				}
-			}
+			orcPlayer = dataPlayers[0].nome === 'orc' ? dataPlayers[0] : dataPlayers[1]
+			humanPlayer = dataPlayers[0].nome === 'human' ? dataPlayers[0] : dataPlayers[1]
 		}
 
 		if (isGameOver) {
@@ -70,9 +64,9 @@ class App extends Component
 		return (
 			<Container>
 				<Row>
-					<Col xs='5' md='5' lg='5'><Player {...humanPlayer} valueLife={3} isYourRound={true}/></Col>
+					<Col xs='5' md='5' lg='5'><Player {...humanPlayer} valueLife={humanLife || (humanPlayer && humanPlayer.vida)} isYourRound={whosRound === 'human'}/></Col>
 					<Col xs='2' md='2' lg='2'><Round /></Col>
-					<Col xs='5' md='5' lg='5'><Player {...orcPlayer} valueLife={10} /></Col>
+					<Col xs='5' md='5' lg='5'><Player {...orcPlayer} valueLife={orcLife || (orcPlayer && orcPlayer.vida)} isYourRound={whosRound === 'orc'} /></Col>
 				</Row>
 			</Container>
 		)
@@ -83,8 +77,9 @@ const mapDispatchToProps = dispatch => ({
 	getPlayers: _=> dispatch({ type: GET_PLAYERS_ASYNC }),
 })
 
-const mapStateToProps = ({ playersReducer }) => ({	
-	playersReducer
+const mapStateToProps = ({ playersReducer, roundReducer }) => ({	
+	playersReducer,
+	roundReducer
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)
