@@ -79,8 +79,9 @@ class Player extends PureComponent
 					<Form.Check 
 						type='radio' 
 						id='rbPlayer' 
-						label={isYourRound && 'Your turn!'}
-						disabled={!isYourRound} defaultChecked={isYourRound} />
+						label={isYourRound && 'Sua Vez!'}
+						checked={isYourRound}
+						disabled={!isYourRound} />
 				</Row>
 				<Row><Img src={Dice} alt='Dice' onClick={this.throwDices} className='dice' /></Row>
 				<Row>
