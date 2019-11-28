@@ -2,15 +2,14 @@ import { all } from 'redux-saga/effects'
 
 //Watch
 import watchPlayers from './players'
-import watchSetDicePlayers from './round/setDicePlayer'
-import watchSetRoundAndPlayer from './round/setRoundAndPlayer'
-import watchSetTurnPlayer from './round/setTurnPlayer'
+import watchGetRound from './round/getRoundData'
+import watchSetRound from './round/setRound'
+
 
 export default function* () {
 	yield all([
 		watchPlayers(),
-		watchSetDicePlayers(),
-		watchSetRoundAndPlayer(),
-		watchSetTurnPlayer()
+		watchGetRound(),
+		watchSetRound(),
 	])
 }
