@@ -11,7 +11,14 @@ Pontos à cobrir:
 - App tenta simular este jogo de RPG em turnos.
 - App tenta trazer a interação ao jogo
 
-###Como rodar a aplicação
+Depêndencias do projeto
+-----------------------
+
+Este projeto é dependente do projeto de backend que esta em [https://github.com/AvnerGeraldo/backend-global-hitss], por isso antes de forkar este projeto baixe e instale o projeto informado anteriormente.
+
+
+Como rodar a aplicação
+----------------------
 
 1 - Executar comando `git clone https://github.com/AvnerGeraldo/frontend-global-hitss` para baixar o projeto
 
