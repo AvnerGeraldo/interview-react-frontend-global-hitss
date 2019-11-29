@@ -4,6 +4,7 @@ import { all } from 'redux-saga/effects'
 import watchPlayers from './players'
 import watchGetRound from './round/getRoundData'
 import watchSetRound from './round/setRound'
+import watchThrowDamage from './round/throwDamage'
 
 
 export default function* () {
@@ -11,5 +12,6 @@ export default function* () {
 		watchPlayers(),
 		watchGetRound(),
 		watchSetRound(),
+		watchThrowDamage()
 	])
 }
