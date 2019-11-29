@@ -8,7 +8,7 @@ import Dice20Faces from '../../assets/images/dice-20-faces.png'
 
 //Actions
 import { SET_WHOS_ROUND, CLEAN_WHOS_ROUND } from '../../actions/round'
-import { SET_ROUND_ASYNC } from '../../actions/saga/round'
+import { SET_ROUND_ASYNC, THROW_DAMAGE_ASYNC } from '../../actions/saga/round'
 
 //Styled Components
 const Img = styled.img`
@@ -74,10 +74,8 @@ class Round extends PureComponent
 				messageRound: 'Verificando resultados....',
 				diceValue: 0
 			}, _ => {
-				if (orcId === 0 || humanId === 0) {
-					orcId = dataOrc.id
-					humanId = dataHuman.id
-				}
+				orcId = orcId || dataOrc.id
+				humanId = humanId || dataHuman.id
 	
 				const sumHuman = diceHuman + dataHuman.agilidade
 				const sumOrc = diceOrc + dataOrc.agilidade
@@ -155,7 +153,7 @@ class Round extends PureComponent
 		}
 
 		this.setState({
-			messageRound: `Início de jogo!\nJogador \'${playerName}\' rode o dado!`,
+			messageRound: `Início de jogo!\nJogador \'${playerName}\' rode o dado para atacar!`,
 			player
 		}, _=> dispatch({
 			type: SET_WHOS_ROUND,
@@ -165,14 +163,107 @@ class Round extends PureComponent
 		}))
 	}
 
-	secondStep = player => {
-		/*
+	secondStep = player => {		
 		const { dispatch, initialPlayer } = this.props
 		let { orcId, humanId } = this.props
 		const { isHumanPlayed, isOrcPlayed, diceHuman, diceOrc, dataOrc, dataHuman } = this.state
-		let playerName = player === 'human' ? 'Humano' : 'Orc'*/
+		let playerName = player === 'human' ? 'Humano' : 'Orc'
 
+		if (isHumanPlayed && isOrcPlayed) {
+			this.setState({
+				messageRound: 'Verificando resultados....',
+				diceValue: 0
+			}, _ => {
+				//Set ids
+				orcId = orcId || dataOrc.id
+				humanId = humanId || dataHuman.id
 
+				//Whos attack ?
+				let atkPlayer = dataHuman
+				let diceAtk = diceHuman
+				let defPlayer = dataOrc
+				let diceDef = diceOrc
+
+				if (initialPlayer === orcId && player === 'orc') {
+					atkPlayer = dataOrc
+					diceAtk = diceOrc
+					defPlayer = dataHuman
+					diceDef = diceHuman
+				}				
+
+				//Check if throw damage or not
+				this.battleRound(atkPlayer, defPlayer, diceAtk, diceDef)
+				return
+
+				//Informar aos jogadores que deu empate
+				//não causar dano a ninguem
+				//verificar se os oponentes ainda tem vida acima de 0
+				//Começar um novo turno
+			})
+
+			return
+		}
+
+		let messageRound = `Jogador \'${playerName}\' role o dado para`
+		
+		if ((initialPlayer === humanId && player === 'human') || (initialPlayer === humanId && player === 'human')) {
+			messageRound += ' atacar!'
+		} else {
+			messageRound += ' se defender!'
+		}
+
+		this.setState({
+			messageRound,
+			player
+		}, _=> dispatch({
+			type: SET_WHOS_ROUND,
+			payload: {
+				player
+			}
+		}))		
+	}
+
+	battleRound = (atkPlayer, defPlayer, diceAtk, diceDef, gameId) => {
+		const { dispatch } = this.props
+		const playerName = atkPlayer.nome === 'human' ? 'Humano' : 'Orc'
+
+		//Sum values
+		const atk = diceAtk + atkPlayer.agilidade + atkPlayer.arma.ataque
+		const def = diceDef + defPlayer.agilidade + defPlayer.arma.defesa
+
+		//Check damage
+		if (atk > def) {
+			this.setState({
+				isDiceLock: true,
+				messageRound: `Jogador\'${playerName}\' role os dados para causar danos ao oponente!`,
+				diceValue: 0,
+				diceOrc: 0,
+				diceHuman: 0,
+				isOrcPlayed: false,
+				isHumanPlayed: false,
+			}, _=> dispatch({
+				type: SET_WHOS_ROUND,
+				payload: {
+					player: atkPlayer.nome
+				}
+			}))
+		}
+	}
+
+	throwDamage = (idDamagePlayer, gameId, damage) => {
+		const { dispatch } = this.props
+
+		dispatch({
+			type: THROW_DAMAGE_ASYNC,
+			payload: {
+				idDamagePlayer, 
+				gameId, 
+				damage
+			}
+		})
+		.then(_=> this.setState({
+			//messageRound: `Jogador \'${playerName}\' recebeu ${damage} de dano!`
+		}))
 	}
 
 	throwDices = _ => {	
