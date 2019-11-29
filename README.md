@@ -1,6 +1,9 @@
-#Desafio Batalha Medieval
+Desafio Batalha Medieval
+========================
 
-###Descrição macro do jogo
+Descrição macro do jogo
+-----------------------
+
 Consiste em um jogo de RPG em turnos, onde há o duelo entre um humano e um orc.
 
 Pontos à cobrir:
@@ -10,9 +13,9 @@ Pontos à cobrir:
 
 ###Como rodar a aplicação
 
-1 - Baixar App no link (https://github.com/AvnerGeraldo/frontend-global-hitss)[https://github.com/AvnerGeraldo/frontend-global-hitss]
+1 - Executar comando `git clone https://github.com/AvnerGeraldo/frontend-global-hitss` para baixar o projeto
 
-2 - Entrar na pasta do App
+2 - Entrar na raiz da pasta do App
 
 3 - Executar o comando `yarn start`
 
